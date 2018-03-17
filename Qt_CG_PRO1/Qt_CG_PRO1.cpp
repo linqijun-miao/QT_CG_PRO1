@@ -209,7 +209,7 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 		if (!eventt->isAutoRepeat()) {
 			onJump = true;
 			float xOrZSpeed = ss / 10;
-			if (xOrZSpeed > 1) {
+			if (xOrZSpeed > 0.6) {
 				xOrZSpeed = 0.6f;
 			}
 			float ySpeed = 0.6;
@@ -239,7 +239,15 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 				while (offsetX <= tempOffset) {
 					offsetX += 0.1;
 					update();
-					sleep(4);
+					sleep(1);
+				}
+			}
+			else {
+				float tempOffset = offsetZ + preMove;
+				while (offsetZ <= tempOffset) {
+					offsetZ += 0.1;
+					update();
+					sleep(1);
 				}
 			}
 			
