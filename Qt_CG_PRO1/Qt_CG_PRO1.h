@@ -24,9 +24,10 @@ public:
 	float offsetZ = 0;
 	JumpAbleClass *jumper;
 	float ss = 0.0;
-
+	int cubeCount = 0;
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event); 
+	bool onJump = false;
 protected:
 	void initializeGL();
 	void resizeGL(int w, int h);

@@ -173,12 +173,14 @@ void Qt_CG_PRO1::paintGL() {
 		gluLookAt(0, 3, 3, 0.0, 0, 0, 0, 1, 0);
 		glRotatef(10, 0.0f, 1.0f, 0.0f);
 		glTranslatef(tCube.posX-6, 0, tCube.posZ);
+		glTranslatef(-offsetX, 0, -offsetZ);
 		glCallList(m_box);
 	}	
 	glLoadIdentity();
 	gluLookAt(0, 3, 3, 0.0, 0, 0, 0, 1, 0);
 	glRotatef(10, 0.0f, 1.0f, 0.0f);
-	glTranslatef(jumper->posX-6+4 , 2, jumper->posZ);
+	glTranslatef(jumper->posX-6+4 , jumper->posY, jumper->posZ);
+	glTranslatef(-offsetX, 0, -offsetZ);
 	glCallList(s_box);
 
 }
@@ -201,14 +203,50 @@ void sleep(unsigned int msec)
 void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 	switch (eventt->key()) {
 	case Qt::Key_K:
-		if (!eventt->isAutoRepeat()) {
-			float xOrZSpeed = ss / 10;
-			float ySpeed = 0.6;
-			while (ySpeed > 0) {
-				
-			}
+		if (onJump) {
+			return;
 		}
+		if (!eventt->isAutoRepeat()) {
+			onJump = true;
+			float xOrZSpeed = ss / 10;
+			if (xOrZSpeed > 1) {
+				xOrZSpeed = 0.6f;
+			}
+			float ySpeed = 0.6;
+			float preMove = 0.0;
+			do{
+				if (cubeList.at(cubeCount).nextP) {//x轴
+					jumper->posX += xOrZSpeed;//移动方块
+					preMove += xOrZSpeed;
+					jumper->posY += ySpeed;
+					update();
+					ySpeed -= 0.1;
+					sleep(10);
+				}
+				else {
+					jumper->posZ += xOrZSpeed;
+					preMove += xOrZSpeed;
+					jumper->posY += ySpeed;
+					update();
+					ySpeed -= 0.1;
+					sleep(10);
+				}
+			} while (jumper->posY >= 2.0f);
+			ss = 0.0;
+			jumper->posY = 2;
+			if (cubeList.at(cubeCount).nextP) {//移动镜头
+				float tempOffset = offsetX + preMove;
+				while (offsetX <= tempOffset) {
+					offsetX += 0.1;
+					update();
+					sleep(4);
+				}
+			}
+			
 
+			onJump = false;
+		}
+		
 		break;
 	}
 }
