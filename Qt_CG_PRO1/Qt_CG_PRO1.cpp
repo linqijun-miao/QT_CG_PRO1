@@ -277,7 +277,7 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 			}
 			if (onOrDrop) {
 				do {
-					
+					//ÎÒ²»¹Ü
 						jumper->posY += ySpeed;
 						update();
 						ySpeed -= 0.1;
