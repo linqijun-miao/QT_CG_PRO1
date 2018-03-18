@@ -11,7 +11,7 @@ public:
 	Qt_CG_PRO1 *widget;
 
 	void jump(float x, float z);
-	float posX = 0;
+	float posX = 4;
 	float posZ = 0;
 	float posY = 2;
 };

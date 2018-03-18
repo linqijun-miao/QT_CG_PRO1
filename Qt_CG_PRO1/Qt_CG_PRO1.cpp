@@ -179,7 +179,7 @@ void Qt_CG_PRO1::paintGL() {
 	glLoadIdentity();
 	gluLookAt(0, 3, 3, 0.0, 0, 0, 0, 1, 0);
 	glRotatef(10, 0.0f, 1.0f, 0.0f);
-	glTranslatef(jumper->posX-6+4 , jumper->posY, jumper->posZ);
+	glTranslatef(jumper->posX-6 , jumper->posY, jumper->posZ);
 	glTranslatef(-offsetX, 0, -offsetZ);
 	glCallList(s_box);
 
@@ -188,7 +188,7 @@ void Qt_CG_PRO1::paintGL() {
 void  Qt_CG_PRO1::keyPressEvent(QKeyEvent *eventt) {
 	switch (eventt->key()) {
 	case Qt::Key_K:
-		ss++;
+		ss+=0.2;
 		break;
 	}
 }
@@ -209,13 +209,15 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 		if (!eventt->isAutoRepeat()) {
 			onJump = true;
 			float xOrZSpeed = ss / 10;
-			if (xOrZSpeed > 0.6) {
-				xOrZSpeed = 0.6f;
+			if (xOrZSpeed > 0.5) {
+				xOrZSpeed = 0.5f;
 			}
-			float ySpeed = 0.6;
+			float ySpeed = 1.2;
 			float preMove = 0.0;
-			do{
-				if (cubeList.at(cubeCount).nextP) {//x轴
+			bool onOrDrop = false;//true means drop 
+
+			do{// 这是没有掉下去的情况
+				if (cubeList.at(cubeCount+1).nextP) {//x轴
 					jumper->posX += xOrZSpeed;//移动方块
 					preMove += xOrZSpeed;
 					jumper->posY += ySpeed;
@@ -232,9 +234,61 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 					sleep(10);
 				}
 			} while (jumper->posY >= 2.0f);
+
+			if (cubeList.at(cubeCount+1).nextP) {
+				if ((jumper->posX - cubeList.at(cubeCount).posX) <= 1) {
+					
+					onOrDrop = false;
+				}
+				else {
+					if (((jumper->posX - cubeList.at(cubeCount + 1).posX) <= 1&& (jumper->posX - cubeList.at(cubeCount + 1).posX)>0)|| ((cubeList.at(cubeCount + 1).posX - jumper->posX) <= 1)&& (cubeList.at(cubeCount + 1).posX - jumper->posX) >0){
+						float test = cubeList.at(cubeCount+1).posX;
+						onOrDrop = false;
+						cubeCount++;
+						JumpCubeClass last = cubeList.at(cubeList.size()-1);
+						JumpCubeClass newCube;
+						newCube.ranPOS(last.posX, last.posZ);
+						newCube.attach(this);
+						cubeList.insert(cubeList.end(), newCube);
+					}
+					else {
+						onOrDrop = true;
+					}
+				}
+			}
+			else {
+				if ((jumper->posZ - cubeList.at(cubeCount).posZ) <= 1) {
+					onOrDrop = false;
+				}
+				else {
+					if (((jumper->posZ - cubeList.at(cubeCount + 1).posZ) <= 1 && (jumper->posZ - cubeList.at(cubeCount + 1).posZ)>0) || ((cubeList.at(cubeCount + 1).posZ - jumper->posZ) <= 1) && (cubeList.at(cubeCount + 1).posZ - jumper->posZ) >0) {
+						onOrDrop = false;
+						cubeCount++;
+						JumpCubeClass last = cubeList.at(cubeList.size()-1);
+						JumpCubeClass newCube;
+						newCube.ranPOS(last.posX, last.posZ);
+						newCube.attach(this);
+						cubeList.insert(cubeList.end(),newCube);
+					}
+					else {
+						onOrDrop = true;
+					}
+				}
+			}
+			if (onOrDrop) {
+				do {
+					
+						jumper->posY += ySpeed;
+						update();
+						ySpeed -= 0.1;
+						sleep(10);			
+				} while (jumper->posY >= 0.0f);
+			}
+
+
 			ss = 0.0;
 			jumper->posY = 2;
-			if (cubeList.at(cubeCount).nextP) {//移动镜头
+			if (cubeList.at(cubeCount+1).nextP) {//移动镜头
 				float tempOffset = offsetX + preMove;
 				while (offsetX <= tempOffset) {
 					offsetX += 0.1;
@@ -251,6 +305,7 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 				}
 			}
 			
+
 
 			onJump = false;
 		}

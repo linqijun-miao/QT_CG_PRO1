@@ -27,7 +27,7 @@ public:
 	int cubeCount = 0;
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event); 
-	bool onJump = false;
+	bool onJump = false; 
 protected:
 	void initializeGL();
 	void resizeGL(int w, int h);
