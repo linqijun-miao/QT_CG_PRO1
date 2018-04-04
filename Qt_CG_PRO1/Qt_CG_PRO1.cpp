@@ -36,7 +36,7 @@ void Qt_CG_PRO1::initializeGL() {
 
 	GLfloat LightAmbient[] = { 0.5f, 0.5f, 0.5f, 1.0f };  //环境光参数  
 	GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };  //漫散光参数  
-	GLfloat LightPosition[] = { 0.0f, 0.0f, 6.0f, 1.0f }; //光源位置  
+	GLfloat LightPosition[] = { 2.0f, 3.0f, -6.0f, 1.0f }; //光源位置  
 	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);     //设置环境光  
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);     //设置漫射光  
 	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);   //设置光源位置  
@@ -50,7 +50,7 @@ void Qt_CG_PRO1::resizeGL(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	GLfloat aspect;
-
+	glViewport(0, 0, w, h);
 
 	if (w >= h) {
 		aspect = w / h;
@@ -170,17 +170,19 @@ void Qt_CG_PRO1::paintGL() {
 
 		JumpCubeClass tCube = *iter;
 		glLoadIdentity();
-		gluLookAt(0, 3, 3, 0.0, 0, 0, 0, 1, 0);
-		glRotatef(10, 0.0f, 1.0f, 0.0f);
+		gluLookAt(-1, 3, 5, 0.0, 0, 0, 0, 1, 0);
+		glRotatef(30, 0.0f, 1.0f, 0.0f);
 		glTranslatef(tCube.posX-6, 0, tCube.posZ);
 		glTranslatef(-offsetX, 0, -offsetZ);
+		
 		glCallList(m_box);
 	}	
 	glLoadIdentity();
-	gluLookAt(0, 3, 3, 0.0, 0, 0, 0, 1, 0);
-	glRotatef(10, 0.0f, 1.0f, 0.0f);
+	gluLookAt(-1, 3, 5, 0.0, 0, 0, 0, 1, 0);
+	glRotatef(30, 0.0f, 1.0f, 0.0f);
 	glTranslatef(jumper->posX-6 , jumper->posY, jumper->posZ);
 	glTranslatef(-offsetX, 0, -offsetZ);
+	
 	glCallList(s_box);
 
 }
@@ -283,6 +285,26 @@ void  Qt_CG_PRO1::keyReleaseEvent(QKeyEvent *eventt) {
 						ySpeed -= 0.1;
 						sleep(10);			
 				} while (jumper->posY >= 0.0f);
+				sleep(1000);
+				if (cubeList.at(cubeCount + 1).nextP) {
+					
+					jumper->posX=cubeList.at(cubeCount ).posX;
+					ss = 0.0;
+					jumper->posY = 2;
+					update();
+					onOrDrop = false;
+					onJump = false;
+					break;
+				}
+				else {
+					jumper->posZ=cubeList.at(cubeCount ).posZ;
+					ss = 0.0;
+					jumper->posY = 2; 
+					update();
+					onOrDrop = false;
+					onJump = false;
+					break;
+				}
 			}
 
 
